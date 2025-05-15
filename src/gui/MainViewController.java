@@ -34,7 +34,7 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	public void onMenuItemDepartmentAction() {
-		System.out.println("onMenuItemDepartmentAction");
+		loadView("/gui/DeparmentList.fxml");
 	}
 	
 	@FXML
@@ -47,21 +47,30 @@ public class MainViewController implements Initializable{
 	}
 	
 	private void loadView(String absoluteName) {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			VBox newVBox = loader.load();
-			
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-			
-			Node mainMenu = mainVBox.getChildren().get(0);
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-		}
-		catch (IOException e) {
-			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
-		}
+	    try {
+	        URL fxmlUrl = getClass().getResource(absoluteName);
+	        if (fxmlUrl == null) {
+	            System.out.println("⚠ ERRO: Arquivo FXML não encontrado no caminho: " + absoluteName);
+	            Alerts.showAlert("Erro de Caminho", "Arquivo FXML não encontrado", 
+	                             "Verifique se o caminho '" + absoluteName + "' está correto.", 
+	                             AlertType.ERROR);
+	            return;
+	        }
+
+	        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+	        VBox newVBox = loader.load();
+
+	        Scene mainScene = Main.getMainScene();
+	        VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+	        Node mainMenu = mainVBox.getChildren().get(0);
+	        mainVBox.getChildren().clear();
+	        mainVBox.getChildren().add(mainMenu);
+	        mainVBox.getChildren().addAll(newVBox.getChildren());
+
+	    } catch (IOException e) {
+	        Alerts.showAlert("IO Exception", "Erro ao carregar a view", e.getMessage(), AlertType.ERROR);
+	    }
 	}
 
 }
